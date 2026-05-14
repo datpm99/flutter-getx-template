@@ -1,0 +1,90 @@
+flutter_native_splash:
+  # flutter pub run flutter_native_splash:create
+  # flutter pub run flutter_native_splash:remove
+
+  ## color or background_image is required.
+  ## color: set the background of your splash screen to a solid color.
+  ## background_image: set the background of your splash screen to a png image.
+  color: "#FFFFFF"
+  #background_image: "assets/images/logo.png"
+
+  ## image: allows you to specify an image used in the splash screen.
+  ## It must be a png file and should be sized for 4x pixel density.
+  image: assets/images/logo.png
+
+  ## The branding property allows you to specify an image used as branding in the splash screen.
+  ## It must be a png file.
+  #branding: assets/dart.png
+
+  ## Position the branding image at the bottom of the screen you can use bottom, bottomRight, and bottomLeft.
+  ## The default values is bottom.
+  #branding_mode: bottom
+
+  ## Dark mode.
+  #color_dark: "#042a49"
+  #background_image_dark: "assets/dark-background.png"
+  #image_dark: assets/splash-invert.png
+  #branding_dark: assets/dart_dark.png
+
+  ## Android 12 differently than previous versions.  Please visit
+  # https://developer.android.com/guide/topics/ui/splash-screen
+  android_12:
+    # Splash screen will be clipped to a circle on the center of the screen.
+    # App icon with an icon background: This should be 960×960 pixels, and fit within a circle 640 pixels in diameter.
+    # App icon without an icon background: This should be 1152×1152 pixels, and fit within a circle 768 pixels in diameter.
+    image: assets/images/splash_android12.png
+
+    ## Splash screen background color.
+    color: "#ffffff"
+
+    ## App icon background color.
+    icon_background_color: "#ffffff"
+
+  ## The branding property allows you to specify an image used as branding in the splash screen.
+  #  branding: assets/dart.png
+
+  ## Dark mode.
+  #  image_dark: assets/android12splash-invert.png
+  #  color_dark: "#042a49"
+  #  icon_background_color_dark: "#eeeeee"
+
+  # Disable generating a splash screen on a given platform.
+  #android: false
+  #ios: false
+  web: false
+
+  ## Platform specific images can be specified with the following parameters.
+  #image_android: assets/splash-android.png
+  #image_dark_android: assets/splash-invert-android.png
+  #image_ios: assets/splash-ios.png
+  #image_dark_ios: assets/splash-invert-ios.png
+  #image_web: assets/splash-web.png
+  #image_dark_web: assets/splash-invert-web.png
+  #background_image_android: "assets/background-android.png"
+  #background_image_dark_android: "assets/dark-background-android.png"
+  #background_image_ios: "assets/background-ios.png"
+  #background_image_dark_ios: "assets/dark-background-ios.png"
+  #background_image_web: "assets/background-web.png"
+  #background_image_dark_web: "assets/dark-background-web.png"
+  #branding_android: assets/brand-android.png
+  #branding_dark_android: assets/dart_dark-android.png
+  #branding_ios: assets/brand-ios.png
+  #branding_dark_ios: assets/dart_dark-ios.png
+
+  ## The position of the splash image. All default to center.
+  ## (https://developer.android.com/reference/android/view/Gravity)
+  #android_gravity: center
+
+  ## https://developer.apple.com/documentation/uikit/uiview/contentmode)
+  #ios_content_mode: center
+
+  ## The screen orientation.
+  ## https://developer.android.com/guide/topics/manifest/activity-element#screen
+  #android_screen_orientation: sensorLandscape
+
+  # To hide the notification bar, use the fullscreen parameter.
+  # NOTE: Unlike Android, iOS will not automatically show the notification bar when the app loads.
+  #       To show the notification bar, add the following code to your Flutter app:
+  #       WidgetsFlutterBinding.ensureInitialized();
+  #       SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom, SystemUiOverlay.top]);
+  #fullscreen: true
