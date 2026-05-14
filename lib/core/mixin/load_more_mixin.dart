@@ -13,7 +13,7 @@ mixin LoadMoreMixin {
   /// Func [updateData] update ui list.
   void updateData();
 
-  void loadMoreData() {
+  void listenerLoadMoreData() {
     scrollController.addListener(() async {
       bool canLoadMore = (scrollController.position.extentAfter == 0);
       if (canLoadMore && isLoadMore && isLoadData) {

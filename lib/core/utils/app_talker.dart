@@ -6,6 +6,11 @@ import 'package:talker_flutter/talker_flutter.dart';
 class AppTalker {
   static final talker = TalkerFlutter.init(
     settings: TalkerSettings(enabled: !kReleaseMode),
+    logger: TalkerLogger(
+      settings: TalkerLoggerSettings(
+        enableColors: false, // Tắt màu để tránh lỗi hiển thị ký tự lạ trên console Android Studio
+      ),
+    ),
   );
 
   ///--- Logs ---

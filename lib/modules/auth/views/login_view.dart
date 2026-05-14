@@ -16,7 +16,7 @@ class LoginView extends GetView<LoginController> {
           padding: EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             children: [
-              SizedBox(height: 30),
+              SizedBox(height: Get.width / 3),
               Image.asset('assets/images/logo.png', height: 150),
               SizedBox(height: 30),
               Text('login'.tr, style: AppTextStyles.normalTextW700(size: 24)),

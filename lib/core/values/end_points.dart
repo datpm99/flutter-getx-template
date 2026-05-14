@@ -1,5 +1,5 @@
 class EndPoints {
   static String login = 'auth/login';
-  static String getUsers = 'users';
-  static String createUser = 'users';
+  static String refreshToken = 'auth/refresh';
+  static String product = 'products';
 }

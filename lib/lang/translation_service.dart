@@ -23,13 +23,7 @@ class LanguageService extends GetxService {
   final _storage = Get.find<StorageService>();
   late Locale locale;
 
-  @override
-  void onInit() {
-    super.onInit();
-    _initLocale();
-  }
-
-  void _initLocale() async {
+  Future<void> init() async {
     final language = await _storage.getLanguage();
     if (language.isNotEmpty && language.contains('_')) {
       var loc = language.split('_');

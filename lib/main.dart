@@ -10,31 +10,34 @@ import 'core/constants/app_constants.dart';
 import 'core/theme/app_colors.dart';
 import 'core/theme/app_theme.dart';
 import 'core/utils/app_talker.dart';
+import 'data/services/api_service.dart';
 import 'data/services/storage_service.dart';
 import 'lang/translation_service.dart';
 import 'routes/app_pages.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setSystemUIOverlayStyle(
-    SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarBrightness: Brightness.light,
-    ),
-  );
-
-  // --- Init services ---
-  Get.put(StorageService());
-  Get.put(LanguageService());
-  // await Get.put(BaseApi()).init();
-
+void main() {
   runZonedGuarded(
-    () {
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
+      SystemChrome.setSystemUIOverlayStyle(
+        const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarBrightness: Brightness.light,
+        ),
+      );
+
+      // --- Init services ---
+      await Get.put(StorageService()).init();
+      await Future.wait([
+        Get.put(LanguageService()).init(),
+        Get.put(ApiService()).init(),
+      ]);
+
       FlutterError.onError = (details) {
         AppTalker.talker.handle(details.exception, details.stack);
       };
 
-      runApp(MyApp());
+      runApp(const MyApp());
     },
     (error, stack) {
       AppTalker.talker.handle(error, stack);
@@ -49,17 +52,17 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return TalkerWrapper(
       talker: AppTalker.talker,
-      options: TalkerWrapperOptions(
+      options: const TalkerWrapperOptions(
         enableErrorAlerts: true, // Shows SnackBars for errors
         enableExceptionAlerts: true, // Shows SnackBars for exceptions
       ),
       child: GetMaterialApp(
-        localizationsDelegates: [
+        localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        supportedLocales: [Locale('vi'), Locale('en')],
+        supportedLocales: const [Locale('vi'), Locale('en')],
         enableLog: false,
         debugShowCheckedModeBanner: false,
         color: AppColors.primaryColor,

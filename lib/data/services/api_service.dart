@@ -2,12 +2,21 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_getx_template/core/utils/app_helper.dart';
+import 'package:flutter_getx_template/core/values/end_points.dart';
 import 'package:get/get.dart' hide Response, MultipartFile, FormData;
 import 'package:talker_dio_logger/talker_dio_logger.dart';
 
 import '/core/constants/app_constants.dart';
 import '/core/utils/app_talker.dart';
 import 'storage_service.dart';
+
+// QueuedInterceptorsWrapper chỉ queue phần interceptor, KHÔNG queue network request thực tế.
+// Tức là:
+// Request A chạy interceptor
+// Request B chờ interceptor
+// Sau khi qua interceptor:
+// request A và B vẫn có thể call API song song
 
 class ApiService extends GetxService {
   late Dio _dio;
@@ -27,21 +36,79 @@ class ApiService extends GetxService {
 
     // --- interceptors ---
     _dio.interceptors.add(
+      QueuedInterceptorsWrapper(
+        onError: (DioException e, handler) async {
+          if (e.response?.statusCode == 401) {
+            String? newToken = await _refreshToken();
+
+            if (newToken != null) {
+              // Cập nhật token mới vào header của request bị lỗi
+              e.requestOptions.headers['Authorization'] = 'Bearer $newToken';
+
+              // Thực hiện lại request bị lỗi với token mới
+              final cloneReq = await _dio.request(
+                e.requestOptions.path,
+                options: Options(
+                  method: e.requestOptions.method,
+                  headers: e.requestOptions.headers,
+                ),
+                data: e.requestOptions.data,
+                queryParameters: e.requestOptions.queryParameters,
+              );
+              return handler.resolve(cloneReq);
+            } else {
+              AppHelper.logout(showMess: true);
+            }
+          }
+          return handler.next(e);
+        },
+      ),
+    );
+
+    _dio.interceptors.add(
       TalkerDioLogger(
         talker: AppTalker.talker,
         settings: const TalkerDioLoggerSettings(
           printRequestHeaders: true,
-          printResponseHeaders: true,
+          printErrorHeaders: false,
         ),
       ),
     );
   }
 
-  Future<void> setupHeaderRequest(bool isToken) async {
+  Future<String?> _refreshToken() async {
+    final storage = Get.find<StorageService>();
+
+    final refreshToken = await storage.getRefreshToken();
+    if (refreshToken.isEmpty) return null;
+
+    try {
+      final response = await _dio.post(
+        EndPoints.refreshToken,
+        data: {'refreshToken': refreshToken},
+      );
+
+      if (response.statusCode == 200) {
+        final newToken = response.data['accessToken'];
+        final newRefreshToken = response.data['refreshToken'];
+
+        // Lưu token mới
+        await storage.saveAccessToken(newToken);
+        await storage.saveRefreshToken(newRefreshToken);
+
+        return newToken;
+      }
+    } catch (e) {
+      debugPrint('Refresh Token Error: $e');
+    }
+    return null;
+  }
+
+  Future<void> _setupHeaderRequest(bool isToken) async {
     _dio.options.headers = {};
     if (isToken) {
       final storage = Get.find<StorageService>();
-      final token = await storage.getToken();
+      final token = await storage.getAccessToken();
       _dio.options.headers['Authorization'] = 'Bearer $token';
     }
 
@@ -66,7 +133,7 @@ class ApiService extends GetxService {
     bool isToken = true,
     Map<String, dynamic>? param,
   }) async {
-    await setupHeaderRequest(isToken);
+    await _setupHeaderRequest(isToken);
     return await _request(() => _dio.get(url, queryParameters: param));
   }
 
@@ -76,7 +143,7 @@ class ApiService extends GetxService {
     dynamic data,
     Map<String, dynamic>? param,
   }) async {
-    await setupHeaderRequest(isToken);
+    await _setupHeaderRequest(isToken);
     return await _request(
       () => _dio.post(url, data: data, queryParameters: param),
     );
@@ -88,7 +155,7 @@ class ApiService extends GetxService {
     dynamic data,
     Map<String, dynamic>? param,
   }) async {
-    await setupHeaderRequest(isToken);
+    await _setupHeaderRequest(isToken);
     return await _request(
       () => _dio.put(url, data: data, queryParameters: param),
     );
@@ -100,7 +167,7 @@ class ApiService extends GetxService {
     dynamic data,
     Map<String, dynamic>? param,
   }) async {
-    await setupHeaderRequest(isToken);
+    await _setupHeaderRequest(isToken);
     return await _request(
       () => _dio.delete(url, data: data, queryParameters: param),
     );
@@ -111,7 +178,7 @@ class ApiService extends GetxService {
     bool isToken = true,
     Map<String, dynamic>? param,
   }) async {
-    await setupHeaderRequest(isToken);
+    await _setupHeaderRequest(isToken);
     _dio.options.responseType = ResponseType.bytes;
     return await _request(() => _dio.get(url, queryParameters: param));
   }
@@ -121,7 +188,7 @@ class ApiService extends GetxService {
     bool isToken = true,
     required File file,
   }) async {
-    await setupHeaderRequest(isToken);
+    await _setupHeaderRequest(isToken);
     final partFile = await MultipartFile.fromFile(
       file.path,
       filename: file.path.split('/').last,
@@ -136,7 +203,7 @@ class ApiService extends GetxService {
     bool isToken = true,
     required List<File> files,
   }) async {
-    await setupHeaderRequest(isToken);
+    await _setupHeaderRequest(isToken);
     _dio.options.contentType = 'multipart/form-data';
 
     final formData = FormData();

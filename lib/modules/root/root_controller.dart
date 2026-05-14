@@ -38,6 +38,7 @@ class RootController extends GetxController {
       // if (GetPlatform.isIOS) exit(0);
       return true;
     }
+
     return false;
   }
 }

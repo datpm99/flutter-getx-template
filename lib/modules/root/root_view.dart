@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '/core/theme/app_colors.dart';
 import '/modules/home/home_view.dart';
 import '/modules/product/product_view.dart';
 import '/modules/setting/setting_view.dart';
@@ -14,10 +15,13 @@ class RootView extends GetView<RootController> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) async {
-        NavigatorState navigator = Navigator.of(context);
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+
         bool shouldPop = await controller.canPop();
-        if (shouldPop) navigator.pop();
+        if (shouldPop && context.mounted) {
+          Navigator.of(context).pop();
+        }
       },
       child: Scaffold(
         body: Obx(() {
@@ -26,7 +30,12 @@ class RootView extends GetView<RootController> {
             children: [HomeView(), ProductView(), SettingView()],
           );
         }),
-        bottomNavigationBar: BottomNavBar(),
+        bottomNavigationBar: Container(
+          decoration: BoxDecoration(
+            border: Border(top: BorderSide(color: AppColors.grey6)),
+          ),
+          child: BottomNavBar(),
+        ),
       ),
     );
   }

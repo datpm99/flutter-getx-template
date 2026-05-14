@@ -17,4 +17,5 @@ const Map<String, String> commonEn = {
   'nav_home': 'Home',
   'nav_product': 'Product',
   'nav_setting': 'Setting',
+  'loading': 'Loading...'
 };

@@ -17,4 +17,5 @@ const Map<String, String> commonVi = {
   'nav_home': 'Trang chủ',
   'nav_product': 'Sản phẩm',
   'nav_setting': 'Cài đặt',
+  'loading': 'Đang tải...'
 };

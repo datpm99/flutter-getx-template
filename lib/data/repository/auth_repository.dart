@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 
+import '/core/utils/app_helper.dart';
 import '/core/values/end_points.dart';
 import '/data/models/response/login_response.dart';
 import '/data/services/api_service.dart';
@@ -20,6 +21,11 @@ class AuthRepository {
     if (response != null && response.statusCode == 200) {
       return LoginResponse.fromJson(response.data);
     }
+
+    if (response != null) {
+      AppHelper.showError(response.data['message']);
+    }
+
     return null;
   }
 }

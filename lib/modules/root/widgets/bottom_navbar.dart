@@ -10,18 +10,24 @@ class BottomNavBar extends GetView<RootController> {
 
   @override
   Widget build(BuildContext context) {
-    final items = controller.navData.map(
+    final items = controller.navData
+        .map(
           (e) => BottomNavigationBarItem(
             label: e.name.tr,
-            icon: Image.asset(e.icon, width: 24, color: Colors.grey),
+            icon: Image.asset(
+              'assets/icons/${e.icon}',
+              width: 24,
+              color: Colors.grey,
+            ),
             activeIcon: Image.asset(
-              e.iconActive,
+              'assets/icons/${e.iconActive}',
               width: 24,
               color: AppColors.blue4,
             ),
             backgroundColor: Colors.white,
           ),
-        ).toList();
+        )
+        .toList();
 
     return Obx(
       () => BottomNavigationBar(

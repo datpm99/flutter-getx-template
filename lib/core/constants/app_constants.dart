@@ -1,6 +1,6 @@
 class AppConstants {
   static String appName = 'GetX Template';
-  static String domain = 'https://reqres.in/api/';
+  static String domain = 'https://dummyjson.com/';
 
   static int pageSize = 25;
   static int apiTimeout = 60; // seconds

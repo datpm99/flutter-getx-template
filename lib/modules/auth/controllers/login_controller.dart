@@ -8,9 +8,6 @@ import '/routes/app_routes.dart';
 class LoginController extends GetxController {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
-  RxBool showPassword = false.obs;
-
-  void changedShowPassword() => showPassword.value = !showPassword.value;
 
   void onLogin(BuildContext context) async {
     try {
@@ -24,7 +21,10 @@ class LoginController extends GetxController {
       );
       AppHelper.hideDialog();
 
-      if (result != null) Get.offNamed(AppRoutes.root);
+      if (result != null) {
+        AppHelper.setTokenAndTimeOut(result);
+        Get.offNamed(AppRoutes.root);
+      }
     } catch (e) {
       debugPrint(e.toString());
     }

@@ -25,6 +25,7 @@ class TextFieldWidget extends StatefulWidget {
     this.maxLength,
     this.textCapitalization = TextCapitalization.none,
     this.onTap,
+    this.textInputAction,
   });
 
   final TextEditingController ctrl;
@@ -40,6 +41,7 @@ class TextFieldWidget extends StatefulWidget {
   final int? maxLength;
   final TextCapitalization textCapitalization;
   final VoidCallback? onTap;
+  final TextInputAction? textInputAction;
 
   /// [textCapitalization] TextCapitalization.characters
   // OUTPUT : FLUTTER CODE CAMP
@@ -83,7 +85,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
           (obscureText)
               ? Icons.visibility_off_outlined
               : Icons.visibility_outlined,
-          color: AppColors.grey3,
+          color: Colors.black.withValues(alpha: 0.25),
         ),
       );
     }
@@ -122,13 +124,17 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
       onTap: widget.onTap,
       autocorrect: false,
       enableSuggestions: false,
+      textInputAction: widget.textInputAction,
+      onTapOutside: (event) {
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
       decoration: InputDecoration(
         isDense: true,
-        contentPadding: widget.contentPadding,
+        contentPadding: widget.contentPadding ?? EdgeInsets.all(13),
         hintText: widget.hintText,
         prefixIcon: widget.prefixIcon,
         suffixIcon: getSuffixIcon(),
-        hintStyle: AppTextStyles.normalText(color: AppColors.grey5),
+        hintStyle: AppTextStyles.normalText(color: Colors.grey),
         errorStyle: AppTextStyles.smallText(
           color: AppColors.red2,
         ).copyWith(height: 1),
@@ -137,8 +143,8 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
         border: AppDecoration.inputBorder(),
         enabledBorder: AppDecoration.inputBorder(),
         focusedBorder: AppDecoration.inputBorder(color: Colors.blue),
-        errorBorder: AppDecoration.inputBorder(color: AppColors.red2),
-        focusedErrorBorder: AppDecoration.inputBorder(color: AppColors.red2),
+        errorBorder: AppDecoration.inputBorder(color: Colors.redAccent),
+        focusedErrorBorder: AppDecoration.inputBorder(color: Colors.redAccent),
       ),
     );
   }
